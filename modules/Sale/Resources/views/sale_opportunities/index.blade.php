@@ -1,10 +1,13 @@
 @extends('tenant.layouts.app')
 
 @section('content')
-    @if(session('error'))
-        <div class="alert alert-danger">
-           {{session('error')}}
-        </div>
+@section('content')
+    @if (session('error'))
+        <script>
+            window.onload = function() {
+                alert("{{ session('error') }}");
+            };
+        </script>
     @endif
     <tenant-sale-opportunities-index
         :type-user="{{json_encode(Auth::user()->type)}}"

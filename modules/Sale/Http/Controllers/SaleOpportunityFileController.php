@@ -110,8 +110,8 @@ class SaleOpportunityFileController extends Controller
             // Si el archivo existe, lo descarga
             return Storage::disk('tenant')->download($filePath);
         } else {
-            // Si el archivo no existe, devuelve un error 404
-            return redirect()->back()->with('error','El archivo no esta disponible');
+            // Si el archivo no existe, redirige con un mensaje de error
+            return redirect()->back()->with('error', 'El archivo no está disponible.');
         }
     }
         /**

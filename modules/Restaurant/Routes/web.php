@@ -11,7 +11,7 @@
 |
 */
 
-Route::prefix('restaurant')->group(function() {
+Route::middleware(['auth'])->prefix('restaurant')->group(function() {
     // para configuracion de productos a mostrar
     Route::get('/list/items', 'RestaurantController@list_items')->name('tenant.restaurant.list_items');
     Route::post('items/visible', 'RestaurantController@is_visible');
@@ -21,12 +21,14 @@ Route::prefix('restaurant')->group(function() {
     Route::post('payment_cash', 'RestaurantController@paymentCash')->name('restaurant.payment.cash');
 
     // vista de configuracion general
-    Route::get('configuration', 'RestaurantConfigurationController@configuration')->name('tenant.restaurant.configuration');
-    Route::get('configuration/record', 'RestaurantConfigurationController@record')->name('tenant.restaurant.configuration.record');
-    Route::post('configuration', 'RestaurantConfigurationController@setConfiguration')->name('tenant.restaurant.configuration.set');
-    Route::get('get-users', 'RestaurantConfigurationController@getUsers')->name('tenant.restaurant.users.get');
-    Route::get('get-roles', 'RestaurantConfigurationController@getRoles')->name('tenant.restaurant.roles.get');
-    Route::post('user/set-role', 'RestaurantConfigurationController@setRole')->name('tenant.restaurant.role.set');
+    Route::middleware(['can:manage-configuration'])->group(function() {
+        Route::get('configuration', 'RestaurantConfigurationController@configuration')->name('tenant.restaurant.configuration');
+        Route::get('configuration/record', 'RestaurantConfigurationController@record')->name('tenant.restaurant.configuration.record');
+        Route::post('configuration', 'RestaurantConfigurationController@setConfiguration')->name('tenant.restaurant.configuration.set');
+        Route::get('get-users', 'RestaurantConfigurationController@getUsers')->name('tenant.restaurant.users.get');
+        Route::get('get-roles', 'RestaurantConfigurationController@getRoles')->name('tenant.restaurant.roles.get');
+        Route::post('user/set-role', 'RestaurantConfigurationController@setRole')->name('tenant.restaurant.role.set');
+    });
 
     Route::prefix('notes')->group(function () {
         Route::get('records', 'NotesController@records');
@@ -36,7 +38,6 @@ Route::prefix('restaurant')->group(function() {
 
     //Promotion
     Route::prefix('promotions')->group(function() {
-
         Route::get('', 'PromotionController@index')->name('tenant.restaurant.promotion.index');
         Route::get('columns', 'PromotionController@columns');
         Route::get('tables', 'PromotionController@tables');
@@ -45,12 +46,10 @@ Route::prefix('restaurant')->group(function() {
         Route::post('', 'PromotionController@store');
         Route::delete('{promotion}', 'PromotionController@destroy');
         Route::post('upload', 'PromotionController@upload');
-
     });
 
     //Orders
     Route::prefix('orders')->group(function() {
-
         Route::get('', 'OrderController@index')->name('tenant.restaurant.order.index');
         Route::get('columns', 'OrderController@columns');
         Route::get('records', 'OrderController@records');
@@ -61,12 +60,10 @@ Route::prefix('restaurant')->group(function() {
         Route::post('warehouse', 'OrderController@searchWarehouse');
         Route::get('tables', 'OrderController@tables');
         Route::get('tables/item/{internal_id}', 'OrderController@item');
-
     });
 
     //Cash
     Route::prefix('cash')->group(function() {
-
         Route::get('', 'CashController@index')->name('tenant.restaurant.cash.index');
         Route::get('/pos', 'CashController@posFilter')->name('tenant.restaurant.cash.filter-pos');
         Route::get('records', 'CashController@records');
@@ -80,7 +77,6 @@ Route::prefix('restaurant')->group(function() {
         Route::post('cash_document', 'CashController@cash_document');
         Route::get('close/{cash}', 'CashController@close');
         Route::get('report/{cash}', 'CashController@report');
-        Route::get('report', 'CashController@report_general');
         Route::get('record/{cash}', 'CashController@record');
         Route::delete('{cash}', 'CashController@destroy');
         Route::get('item/tables', 'CashController@item_tables');
@@ -88,25 +84,17 @@ Route::prefix('restaurant')->group(function() {
         Route::get('search/customer/{id}', 'CashController@searchCustomerById');
         Route::get('report/products/{cash}', 'CashController@report_products');
         Route::get('report/products-excel/{cash}', 'CashController@report_products_excel');
-
-
     });
 
-      //Waiters
-      Route::prefix('waiter')->group(function() {
+    //Waiters
+    Route::prefix('waiter')->group(function() {
         Route::post('', 'WaiterController@store');
         Route::get('', 'WaiterController@records');
         Route::delete('{id}', 'WaiterController@destroy');
     });
-
-
-
 });
 
-// ruta publica
+// Ruta pública con middleware de bloqueo de tenant
 Route::middleware(['locked.tenant'])->group(function() {
-    // restaurant
     Route::get('/menu/{name?}', 'RestaurantController@menu')->name('tenant.restaurant.menu');
-
-
 });

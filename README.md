@@ -142,6 +142,14 @@ Validador documentos: [Guía](https://docs.google.com/document/d/1v6XpJrEwCx3suR
 * Toda instalación es gestionada mediante los canales de Slack
 * Nuevas instalaciones o actualizaciones deben ser programadas y gestionadas, para ser ejecutada el mismo día debe haber un problema previo
 
+## Soluciones a la problematica en el proyecto
+
+Se arreglaron los problemas de los módulos Restaurant y Suscription, para que redirija al login sin problemas.
+
+Correción al momento de descargar los archivos no existentes botando un mensaje de error indicando que falta uno de ellos.
+
+
+
 ## FacturaloPeru
 
 [facturaloperu.com](http://facturaloperu.com "Clic")<br>
